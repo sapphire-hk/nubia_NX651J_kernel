@@ -1324,6 +1324,13 @@ enum fsync_mode {
 #define DUMMY_ENCRYPTION_ENABLED(sbi) (0)
 #endif
 
+#ifdef CONFIG_NUBIA_F2FS_TRIM_STAT
+#define NUBIA_F2FS_NO_TRIMMED       0
+#define NUBIA_F2FS_TRIMMING         1
+#define NUBIA_F2FS_TRIMMED          2
+#define NUBIA_F2FS_EXIT_TRIM        9
+#endif
+
 /* For compression */
 enum compress_algorithm_type {
 	COMPRESS_LZO,
@@ -1596,6 +1603,10 @@ struct f2fs_sb_info {
 
 	struct kmem_cache *inline_xattr_slab;	/* inline xattr entry */
 	unsigned int inline_xattr_slab_size;	/* default inline xattr slab size */
+
+#ifdef CONFIG_NUBIA_F2FS_TRIM_STAT
+	int trim_stat;		/* f2fs trim stats: not trimmed, trimming, trimmed */
+#endif
 };
 
 struct f2fs_private_dio {
