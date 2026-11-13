@@ -1,0 +1,16 @@
+#
+# Nubia drivers configuration
+#
+
+menu "nubia drivers"
+
+config NUBIA_DRIVERS
+	bool "NUBIA DRIVERS"
+	default n
+	help
+	  Say Y here if you want to enable NUBIA DRIVERS
+	  If unsure, say N.
+
+comment "Nubia Device Drivers"
+
+endmenu
