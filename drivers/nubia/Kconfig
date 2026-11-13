@@ -21,9 +21,18 @@ config NUBIA_TOUCH
         help
          Say Y here if you have enable NUBIA_TOUCH
          IF  unsure ,say N
+config NUBIA_FINGERPRINT
+        bool "NUBIA_FINGERPRINT"
+        default y
+        help
+         Say Y here if you have enable NUBIA_FINGERPRINT
+         IF  unsure ,say N
 
 endif
 
+if NUBIA_FINGERPRINT
+source "drivers/nubia/fingerprint/Kconfig"
+endif
 if NUBIA_TOUCH
 source "drivers/nubia/touch/Kconfig"
 endif
