@@ -828,6 +828,13 @@ config LEDS_QPNP_VIBRATOR
 	  manually or by the DTEST lines.It uses the android timed-output
 	  framework.
 
+#Nubia add start haptics
+config NUBIA_HAPTIC_VIBRATOR
+        tristate "NUBIA_HAPTIC_VIBRATOR"
+        depends on LEDS_CLASS
+        default n
+# Nubia add end
+
 comment "LED Triggers"
 source "drivers/leds/trigger/Kconfig"
 
