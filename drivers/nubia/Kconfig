@@ -33,6 +33,12 @@ config NUBIA_FINGERPRINT
         help
          Say Y here if you have enable NUBIA_FINGERPRINT
          IF  unsure ,say N
+config NUBIA_SENSORS_SENS
+        bool "NUBIA_SENSORS_SENS"
+        default n
+        help
+         Say Y here if you have enable NUBIA_MUTICOLORLIGHT
+         IF  unsure ,say N
 
 endif
 
@@ -44,6 +50,9 @@ source "drivers/nubia/touch/Kconfig"
 endif
 if NUBIA_SENSORS
 source "drivers/nubia/sensors/Kconfig"
+endif
+if NUBIA_SENSORS_SENS
+source "drivers/nubia/sensors_sensitivity/Kconfig"
 endif
 
 endmenu
