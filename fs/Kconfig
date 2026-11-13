@@ -136,6 +136,9 @@ if BLOCK
 menu "DOS/FAT/NT Filesystems"
 
 source "fs/fat/Kconfig"
+#+linx
+source "fs/exfat/Kconfig"
+#-linx
 source "fs/ntfs/Kconfig"
 
 endmenu
