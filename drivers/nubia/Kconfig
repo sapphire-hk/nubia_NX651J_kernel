@@ -57,6 +57,7 @@ endif
 if NUBIA_SENSORS
 source "drivers/nubia/sensors/Kconfig"
 endif
+source "drivers/nubia/cy8c4014l_touchkey/Kconfig"
 if NUBIA_SENSORS_SENS
 source "drivers/nubia/sensors_sensitivity/Kconfig"
 endif
