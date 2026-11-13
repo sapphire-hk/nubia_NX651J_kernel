@@ -13,4 +13,19 @@ config NUBIA_DRIVERS
 
 comment "Nubia Device Drivers"
 
+if NUBIA_DRIVERS
+
+config NUBIA_TOUCH
+        bool "NUBIA_TOUCH"
+        default n
+        help
+         Say Y here if you have enable NUBIA_TOUCH
+         IF  unsure ,say N
+
+endif
+
+if NUBIA_TOUCH
+source "drivers/nubia/touch/Kconfig"
+endif
+
 endmenu
