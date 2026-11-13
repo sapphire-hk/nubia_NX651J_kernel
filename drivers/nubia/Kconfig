@@ -2,6 +2,7 @@
 # Nubia drivers configuration
 #
 
+#menuconfig NUBIA_DRIVERS
 menu "nubia drivers"
 
 config NUBIA_DRIVERS
@@ -21,24 +22,28 @@ config NUBIA_TOUCH
         help
          Say Y here if you have enable NUBIA_TOUCH
          IF  unsure ,say N
+
 config NUBIA_SENSORS
         bool "NUBIA_SENSORS"
         default n
         help
          Say Y here if you have enable NUBIA_SENSORS
          IF  unsure ,say N
+
 config NUBIA_FINGERPRINT
         bool "NUBIA_FINGERPRINT"
         default y
         help
          Say Y here if you have enable NUBIA_FINGERPRINT
          IF  unsure ,say N
+
 config NUBIA_MULTICOLORLIGHT
         bool "NUBIA_MULTICOLORLIGHT"
         default y
         help
          Say Y here if you have enable NUBIA_MUTICOLORLIGHT
          IF  unsure ,say N
+
 config NUBIA_SENSORS_SENS
         bool "NUBIA_SENSORS_SENS"
         default n
@@ -51,13 +56,19 @@ endif
 if NUBIA_FINGERPRINT
 source "drivers/nubia/fingerprint/Kconfig"
 endif
+
 if NUBIA_TOUCH
 source "drivers/nubia/touch/Kconfig"
 endif
+
 if NUBIA_SENSORS
 source "drivers/nubia/sensors/Kconfig"
 endif
+
 source "drivers/nubia/cy8c4014l_touchkey/Kconfig"
+
+source "drivers/nubia/cc_control/Kconfig"
+
 if NUBIA_SENSORS_SENS
 source "drivers/nubia/sensors_sensitivity/Kconfig"
 endif
