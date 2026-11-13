@@ -33,6 +33,12 @@ config NUBIA_FINGERPRINT
         help
          Say Y here if you have enable NUBIA_FINGERPRINT
          IF  unsure ,say N
+config NUBIA_MULTICOLORLIGHT
+        bool "NUBIA_MULTICOLORLIGHT"
+        default y
+        help
+         Say Y here if you have enable NUBIA_MUTICOLORLIGHT
+         IF  unsure ,say N
 config NUBIA_SENSORS_SENS
         bool "NUBIA_SENSORS_SENS"
         default n
