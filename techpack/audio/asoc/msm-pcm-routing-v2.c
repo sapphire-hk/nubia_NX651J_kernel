@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /* Copyright (c) 2012-2020, The Linux Foundation. All rights reserved.
  */
-
 #include <linux/init.h>
 #include <linux/err.h>
 #include <linux/module.h>
@@ -7598,6 +7597,10 @@ static const struct snd_kcontrol_new sec_mi2s_rx_port_mixer_controls[] = {
 	MSM_BACKEND_DAI_AUXPCM_TX, 1, 0, msm_routing_get_port_mixer,
 	msm_routing_put_port_mixer),
 #endif
+	SOC_DOUBLE_EXT("TX_CDC_DMA_TX_3", SND_SOC_NOPM,
+    MSM_BACKEND_DAI_SECONDARY_MI2S_RX,
+    MSM_BACKEND_DAI_TX_CDC_DMA_TX_3, 1, 0, msm_routing_get_port_mixer,
+    msm_routing_put_port_mixer),
 };
 
 static const struct snd_kcontrol_new tert_mi2s_rx_port_mixer_controls[] = {
@@ -18214,6 +18217,10 @@ static const struct snd_kcontrol_new mmul17_mixer_controls[] = {
 	MSM_BACKEND_DAI_AFE_LOOPBACK_TX,
 	MSM_FRONTEND_DAI_MULTIMEDIA17, 1, 0, msm_routing_get_audio_mixer,
 	msm_routing_put_audio_mixer),
+	SOC_DOUBLE_EXT("SLIM_7_TX", SND_SOC_NOPM,
+	MSM_BACKEND_DAI_SLIMBUS_7_TX,
+	MSM_FRONTEND_DAI_MULTIMEDIA17, 1, 0, msm_routing_get_audio_mixer,
+	msm_routing_put_audio_mixer),
 };
 
 static const struct snd_kcontrol_new mmul18_mixer_controls[] = {
@@ -25117,7 +25124,7 @@ static const struct snd_soc_dapm_route intercon[] = {
 	{"WSA_CDC_DMA_RX_1 Audio Mixer", "MultiMedia16", "MM_DL16"},
 	{"WSA_CDC_DMA_RX_1 Audio Mixer", "MultiMedia26", "MM_DL26"},
 	{"WSA_CDC_DMA_RX_1", NULL, "WSA_CDC_DMA_RX_1 Audio Mixer"},
-
+#if 0
 	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia1", "MM_DL1"},
 	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia2", "MM_DL2"},
 	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia3", "MM_DL3"},
@@ -25136,7 +25143,7 @@ static const struct snd_soc_dapm_route intercon[] = {
 	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia16", "MM_DL16"},
 	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia26", "MM_DL26"},
 	{"RX_CDC_DMA_RX_0", NULL, "RX_CDC_DMA_RX_0 Audio Mixer"},
-
+#endif
 	{"RX_CDC_DMA_RX_1 Audio Mixer", "MultiMedia1", "MM_DL1"},
 	{"RX_CDC_DMA_RX_1 Audio Mixer", "MultiMedia2", "MM_DL2"},
 	{"RX_CDC_DMA_RX_1 Audio Mixer", "MultiMedia3", "MM_DL3"},
@@ -25962,6 +25969,7 @@ static const struct snd_soc_dapm_route intercon[] = {
 	{"MultiMedia8 Mixer", "SLIM_9_TX", "SLIMBUS_9_TX"},
 	{"MultiMedia4 Mixer", "SLIM_0_TX", "SLIMBUS_0_TX"},
 	{"MultiMedia4 Mixer", "SLIM_1_TX", "SLIMBUS_1_TX"},
+	{"MultiMedia17 Mixer", "SLIM_7_TX", "SLIMBUS_7_TX"},
 	{"MultiMedia18 Mixer", "SLIM_0_TX", "SLIMBUS_0_TX"},
 	{"MultiMedia18 Mixer", "SLIM_1_TX", "SLIMBUS_1_TX"},
 	{"MultiMedia19 Mixer", "SLIM_0_TX", "SLIMBUS_0_TX"},
@@ -26160,7 +26168,6 @@ static const struct snd_soc_dapm_route intercon[] = {
 	{"LSM2 Mixer", "VA_CDC_DMA_TX_2", "VA_CDC_DMA_TX_2"},
 	{"LSM2 Mixer", "TX_CDC_DMA_TX_3", "TX_CDC_DMA_TX_3"},
 	{"LSM2_UL_HL", NULL, "LSM2 Mixer"},
-
 
 	{"LSM3 Mixer", "SLIMBUS_0_TX", "SLIMBUS_0_TX"},
 	{"LSM3 Mixer", "SLIMBUS_1_TX", "SLIMBUS_1_TX"},
@@ -28730,7 +28737,27 @@ static const struct snd_soc_dapm_route intercon_mi2s[] = {
 
 	{"SEC_MI2S_RX Port Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
 	{"SEC_MI2S_RX Port Mixer", "INTERNAL_FM_TX", "INT_FM_TX"},
-
+    /*add by nubia for smart PA claiberate fail ,adjust the route order of RX_CDC_DMA_RX_0 and SEC_MI2S_RX Audio Mixer */
+#if 1
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia1", "MM_DL1"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia2", "MM_DL2"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia3", "MM_DL3"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia4", "MM_DL4"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia5", "MM_DL5"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia6", "MM_DL6"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia7", "MM_DL7"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia8", "MM_DL8"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia9", "MM_DL9"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia10", "MM_DL10"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia11", "MM_DL11"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia12", "MM_DL12"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia13", "MM_DL13"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia14", "MM_DL14"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia15", "MM_DL15"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia16", "MM_DL16"},
+	{"RX_CDC_DMA_RX_0 Audio Mixer", "MultiMedia26", "MM_DL26"},
+	{"RX_CDC_DMA_RX_0", NULL, "RX_CDC_DMA_RX_0 Audio Mixer"},
+#endif
 	{"PRI_MI2S_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
 	{"PRI_MI2S_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
 	{"PRI_MI2S_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
@@ -29268,6 +29295,7 @@ static const struct snd_soc_dapm_route intercon_mi2s[] = {
 #ifndef CONFIG_AUXPCM_DISABLE
 	{"SEC_MI2S_RX Port Mixer", "AUX_PCM_UL_TX", "AUX_PCM_TX"},
 #endif
+	{"SEC_MI2S_RX Port Mixer", "TX_CDC_DMA_TX_3", "TX_CDC_DMA_TX_3"},
 	{"SEC_MI2S_RX", NULL, "SEC_MI2S_RX Port Mixer"},
 
 	{"TERT_MI2S_RX Port Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
