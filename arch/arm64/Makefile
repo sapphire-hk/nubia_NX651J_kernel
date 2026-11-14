@@ -152,14 +152,16 @@ ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
 export DTC_FLAGS := -@
 endif
 
-# dtbo.img：本仓库不依赖 CONFIG_BUILD_ARM64_DT_OVERLAY
-# （defconfig 里保持官方原样 is not set，dts/Makefile 已自行加 -@ 生成 __symbols__）
+ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
 KBUILD_DTBO_IMG := dtbo.img
+endif
 
 all:	$(KBUILD_DTBS) $(KBUILD_DTBO_IMG) $(KBUILD_TARGET)
 
+ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
 $(KBUILD_DTBO_IMG): dtbs
 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
+endif
 
 Image: vmlinux
 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
