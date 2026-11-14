@@ -18,7 +18,7 @@ include $(srctree)/arch/arm64/boot/dts/Makefile
 
 OBJCOPYFLAGS_Image :=-O binary -R .note -R .note.gnu.build-id -R .comment -S
 
-targets := Image Image.bz2 Image.gz Image.lz4 Image.lzma Image.lzo
+targets := Image Image.bz2 Image.gz Image.lz4 Image.lzma Image.lzo dtbo.img
 
 DTB_NAMES := $(subst $\",,$(CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE_NAMES))
 ifneq ($(DTB_NAMES),)
@@ -67,6 +67,34 @@ $(obj)/Image.lzo: $(obj)/Image FORCE
 
 $(obj)/Image.gz-dtb: $(obj)/Image.gz $(DTB_OBJS) FORCE
 	$(call if_changed,cat)
+
+# dtbo.img：条目顺序必须与官方 dtbo.img 完全一致。
+# bootloader 用 androidboot.dtbo_idx 硬索引（本机 idx=14 -> lito-v2-mtp-overlay.dtbo），
+# 顺序错一位就会加载到别的机型 overlay，表现为黑屏/卡第一屏。
+DTBO_IMG_ORDER := \
+	lagoon-mtp-overlay.dtbo \
+	lito-v2-qrd-overlay.dtbo \
+	lito-v2-cdp-overlay.dtbo \
+	lagoon-rumi-overlay.dtbo \
+	lito-atp-overlay.dtbo \
+	lagoon-qrd-overlay.dtbo \
+	lito-v2-atp-lcd-overlay.dtbo \
+	lagoon-atp-overlay.dtbo \
+	lagoon-mtp-usbc-overlay.dtbo \
+	lagoon-cdp-overlay.dtbo \
+	lito-mtp-overlay.dtbo \
+	lito-cdp-overlay.dtbo \
+	lito-qrd-overlay.dtbo \
+	lito-rumi-overlay.dtbo \
+	lito-v2-mtp-overlay.dtbo \
+	lito-v2-atp-overlay.dtbo \
+	orchid-cdp-overlay.dtbo \
+	orchid-mtp-overlay.dtbo
+
+DTBO_OBJS := $(addprefix $(obj)/dts/vendor/qcom/,$(DTBO_IMG_ORDER))
+
+$(obj)/dtbo.img: $(DTBO_OBJS) FORCE
+	$(call if_changed,mkdtimg)
 
 install:
 	$(CONFIG_SHELL) $(srctree)/$(src)/install.sh $(KERNELRELEASE) \
