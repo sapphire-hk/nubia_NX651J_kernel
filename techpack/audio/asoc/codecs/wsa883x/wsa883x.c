@@ -234,7 +234,7 @@ static ssize_t swr_slave_reg_show(struct swr_device *pdev, char __user *ubuf,
 		if (!is_swr_slave_reg_readable(i))
 			continue;
 		swr_read(pdev, pdev->dev_num, i, &reg_val, 1);
-		len = snprintf(tmp_buf, 25, "0x%.3x: 0x%.2x\n", i,
+		len = snprintf(tmp_buf, sizeof(tmp_buf), "0x%.3x: 0x%.2x\n", i,
 			       (reg_val & 0xFF));
 		if ((total + len) >= count - 1)
 			break;
