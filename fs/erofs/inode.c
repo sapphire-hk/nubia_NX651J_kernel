@@ -193,36 +193,62 @@ err_out:
 	return ERR_PTR(err);
 }
 
-static int erofs_fill_symlink(struct inode *inode, void *data,
+static int erofs_fill_symlink(struct inode *inode, struct page *page,
 			      unsigned int m_pofs)
 {
 	struct erofs_inode *vi = EROFS_I(inode);
+	unsigned int len = inode->i_size;
+	void *data = page_address(page);
 	char *lnk;
 
 	/* if it cannot be handled with fast symlink scheme */
 	if (vi->datalayout != EROFS_INODE_FLAT_INLINE ||
-	    inode->i_size >= PAGE_SIZE) {
+	    len >= PAGE_SIZE) {
 		inode->i_op = &erofs_symlink_iops;
 		return 0;
 	}
 
-	lnk = kmalloc(inode->i_size + 1, GFP_KERNEL);
+	lnk = kmalloc(len + 1, GFP_KERNEL);
 	if (!lnk)
 		return -ENOMEM;
 
 	m_pofs += vi->xattr_isize;
-	/* inline symlink data shouldn't cross page boundary as well */
-	if (m_pofs + inode->i_size > PAGE_SIZE) {
+
+	if (m_pofs >= PAGE_SIZE) {
+		/* xattr 自身就跨块了，本页已经放不下 symlink 数据，退回通用路径 */
 		kfree(lnk);
-		erofs_err(inode->i_sb,
-			  "inline data cross block boundary @ nid %llu",
-			  vi->nid);
-		DBG_BUGON(1);
-		return -EFSCORRUPTED;
+		inode->i_op = &erofs_symlink_iops;
+		return 0;
 	}
 
-	memcpy(lnk, data + m_pofs, inode->i_size);
-	lnk[inode->i_size] = '\0';
+	if (m_pofs + len > PAGE_SIZE) {
+		/*
+		 * mkfs.erofs 会把 inline symlink 数据排到跨块的位置。
+		 * 上游新内核遇到这种情况会放弃 fast symlink、回退走
+		 * page_get_link，但那是建立在重构后的 erofs_buf 之上的；
+		 * 这里没有那个条件，直接补齐第二块，避免整条 symlink
+		 * 返回 -EFSCORRUPTED（用户态表现为 "Structure needs cleaning"）。
+		 */
+		unsigned int first = PAGE_SIZE - m_pofs;
+		struct page *page2;
+		void *src2;
+
+		page2 = erofs_get_meta_page(inode->i_sb, page->index + 1);
+		if (IS_ERR(page2)) {
+			kfree(lnk);
+			return PTR_ERR(page2);
+		}
+		src2 = kmap_atomic(page2);
+		memcpy(lnk, data + m_pofs, first);
+		memcpy(lnk + first, src2, len - first);
+		kunmap_atomic(src2);
+		unlock_page(page2);
+		put_page(page2);
+	} else {
+		memcpy(lnk, data + m_pofs, len);
+	}
+
+	lnk[len] = '\0';
 
 	inode->i_link = lnk;
 	inode->i_op = &erofs_fast_symlink_iops;
@@ -254,7 +280,7 @@ static int erofs_fill_inode(struct inode *inode, int isdir)
 		inode->i_fop = &erofs_dir_fops;
 		break;
 	case S_IFLNK:
-		err = erofs_fill_symlink(inode, page_address(page), ofs);
+		err = erofs_fill_symlink(inode, page, ofs);
 		if (err)
 			goto out_unlock;
 		inode_nohighmem(inode);
